@@ -151,15 +151,17 @@ then
     exit 0
 fi
 
+COMPARE_TOOL='blink-diff'
+
 if \
-    ! which compare > /dev/null || \
+    ! which "$COMPARE_TOOL" > /dev/null || \
     ! which montage > /dev/null
 then
-    echo 'ImageMagick is not installed.' >&2
+    echo "$COMPARE_TOOL/ImageMagick is not installed." >&2
     exit 1
 fi
 
-if [[ $exifdiff = 0 ]] && compare "$f1" "$f2" /dev/null
+if [[ $exifdiff = 0 ]] && "$COMPARE_TOOL" "$f1" "$f2" /dev/null
 then
     exit 0
 fi
@@ -192,8 +194,9 @@ fi
 
 do_compare()
 {
-    compare $color_flag $fuzz_flag $backgroundcolor_flag "$f1" "$f2" png:- | \
-        montage -geometry +4+4 $backgroundcolor_flag "$f1" - "$f2" png:- >"$destfile" 2>/dev/null || true
+    # compare $color_flag $fuzz_flag $backgroundcolor_flag "$f1" "$f2" png:- | \
+    #     montage -geometry +4+4 $backgroundcolor_flag "$f1" - "$f2" png:- >"$destfile" 2>/dev/null || true
+    "$COMPARE_TOOL" "$f1" "$f2" --output "$destfile" 2>/dev/null || true
 }
 
 if which xdg-open > /dev/null
